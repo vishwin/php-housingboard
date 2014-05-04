@@ -14,7 +14,6 @@ $valid=NULL; // will be a bool for valid login credentials
 	<script src="js/vendor/modernizr.js"></script>
 </head>
 <body>
-<?php require_once "navbar.php"; ?>
 <?php if (!empty($_POST)) {
 	if ($user_query=$db_connection->query('select username, password from users where username="' . $_POST['username'] . '"')) {
 		$user=$user_query->fetch_assoc();
@@ -30,6 +29,7 @@ $valid=NULL; // will be a bool for valid login credentials
 		$valid=false;
 	}
 } ?>
+<?php require_once "navbar.php"; ?>
 <?php if (isset($valid) && !$valid) { ?>
 <div data-alert class="alert-box alert">
 	Invalid username and/or password.
