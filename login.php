@@ -60,8 +60,12 @@ $valid=NULL; // will be a bool for valid login credentials
 			<button type="submit" class="button success expand">Log in</button>
 		</div></form>
 		
-		<p class="text-center">Don't have an account?<br><a class="button small" data-reveal-id="createAccount" data-reveal>Join the Housing Board</a></p>
+		<p class="text-center">Don't have an account?<br><a class="button small" data-reveal-id="createAccount" data-reveal-ajax="true" href="createaccount.php">Join the Housing Board</a></p>
 	</div><?php } ?>
+</div>
+
+<div id="createAccount" class="reveal-modal" data-reveal>
+	<!--WILL BE OVERWRITTEN VIA AJAX-->
 </div>
 <script src="js/vendor/jquery.js"></script>
 <script src="js/foundation.min.js"></script>
