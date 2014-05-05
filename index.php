@@ -18,19 +18,23 @@ session_start();
 		<h1>Available housing</h1><hr>
 		
 <?php
-if ($date_query=$db_connection->query('select post_date from posts')) {
+if ($date_query=$db_connection->query('select distinct post_date from posts order by post_date desc')) {
 	while ($date_u=$date_query->fetch_assoc()) {
 		$date=new DateTime($date_u['post_date']);
 		printf("\t\t<h3>%s</h3>\n", $date->format('j F Y'));
 		
-		if ($post_query=$db_connection->query('select post_id, name, city, state, type, start, end, bedrooms, price from posts')) { ?>
+		if ($post_query=$db_connection->query('select post_id, name, addr, city, state, type, start, end, bedrooms, price from posts where post_date="' . $date->format('Y-m-d') . '"')) { ?>
 		<ul>
 <?php
 			while ($post=$post_query->fetch_assoc()) { ?>
 <?php
 				$start_o=new DateTime($post['start']);
-				$end_o=new DateTime($post['end']); ?>
-			<li><?php echo '<a href="post.php?id=' . $post['post_id'] . '">' . $post['name'] . " " . $post['type'] . " " . $start_o->format('F Y') . "&ndash;" . $end_o->format('F Y') . "</a>"; ?>&nbsp;&ndash;&nbsp;<span class="secondary label">$<?php echo $post['price']; ?></span>/<?php echo $post['bedrooms']; ?>&nbsp;&ndash;&nbsp;<small>(<?php echo $post['city'] . ", " . $post['state']; ?>)</small></li>
+				$end_o=new DateTime($post['end']);
+				$post_displayname=$post['name'];
+				if (empty($post['name'])) {
+					$post_displayname=$post['addr'];
+				} ?>
+			<li><?php echo '<a href="post.php?id=' . $post['post_id'] . '">' . $post_displayname . " " . strtolower($post['type']) . " " . $start_o->format('F Y') . "&ndash;" . $end_o->format('F Y') . "</a>"; ?>&nbsp;&ndash;&nbsp;<span class="secondary label">$<?php echo $post['price']; ?></span>/<?php echo $post['bedrooms']; ?>&nbsp;&ndash;&nbsp;<small>(<?php echo $post['city'] . ", " . $post['state']; ?>)</small></li>
 <?php
 			} ?>
 		</ul>
