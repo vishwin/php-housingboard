@@ -17,7 +17,7 @@
 		</ul>
 		
 		<?php if (isset($_SESSION['user'])) { ?><ul class="left">
-			<li><a href="add.php">Post</a></li>
+			<li><a href="post.php?action=add">Post</a></li>
 		</ul><?php } ?>
 	</section>
 </nav>
