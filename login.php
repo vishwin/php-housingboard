@@ -15,11 +15,13 @@ $valid=NULL; // will be a bool for valid login credentials
 </head>
 <body>
 <?php if (!empty($_POST)) {
-	if ($user_query=$db_connection->query('select username, password from users where username="' . $_POST['username'] . '"')) {
+	if ($user_query=$db_connection->query('select username, password, email, fname from users where username="' . $_POST['username'] . '"')) {
 		$user=$user_query->fetch_assoc();
 		if (hash('sha512', $_POST['password'])==$user['password']) {
 			$valid=true;
 			$_SESSION['user']=$user['username'];
+			$_SESSION['email']=$user['email'];
+			$_SESSION['dname']=$user['fname'];
 		}
 		else {
 			$valid=false;

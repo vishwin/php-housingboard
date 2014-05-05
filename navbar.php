@@ -7,7 +7,7 @@
 	<section class="top-bar-section">
 		<ul class="right">
 			<?php if (isset($_SESSION['user'])) { ?><li class="has-dropdown">
-				<a href="#"><?php echo $_SESSION['user']; ?></a>
+				<a><img src=<?php echo '"http://www.gravatar.com/avatar/' . md5(strtolower(trim($_SESSION['email']))) . '?s=25"'; ?> alt="Gravatar">&nbsp;<?php echo $_SESSION['dname']; ?></a>
 				<ul class="dropdown">
 					<li><a href="profile.php">Profile</a></li>
 					<li><a href="logout.php">Log out</a></li>
