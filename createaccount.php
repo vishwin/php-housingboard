@@ -50,25 +50,25 @@ else { // in the modal ?>
 <h2>Create account</h2>
 <form action="createaccount.php" method="post">
 	<label>Username
-		<input type="text" name="username" placeholder="Pick a username">
+		<input type="text" name="username" placeholder="Pick a username" required>
 	</label>
 	<label>Password
-		<input type="password" name="password" placeholder="Type a password">
+		<input type="password" name="password" placeholder="Type a password" required>
 	</label>
 	<label>Confirm password
-		<input type="password" name="password2" placeholder="Type the same password">
+		<input type="password" name="password2" placeholder="Type the same password" required>
 	</label>
 	<label>Email
-		<input type="email" name="email" placeholder="Type your email">
+		<input type="email" name="email" placeholder="Type your email" required>
 	</label>
 	<label>First name
-		<input type="text" name="fname">
+		<input type="text" name="fname" required>
 	</label>
 	<label>Last name
-		<input type="text" name="lname">
+		<input type="text" name="lname" required>
 	</label>
 	<label>School standing
-		<select name="standing">
+		<select name="standing" required>
 			<option value="1">Freshman</option>
 			<option value="2">Sophomore</option>
 			<option value="3">Junior</option>
