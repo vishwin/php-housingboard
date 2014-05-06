@@ -89,17 +89,84 @@ session_start();
 	</div></form></div>
 <?php
 	}
-	else if (isset($_GET['id'])) {
-		$post=$db_connection->query('select * from posts where post_id="' . $_GET['id'] . '"')->fetch_assoc();
-		$displayname=$post['name'];
+	else if (isset($_GET['id']) && !isset($_GET['action'])) {
+		$post=$db_connection->query('select * from posts where post_id="' . $_GET['id'] . '"')->fetch_assoc();$displayname=$post['name'];
 		if (empty($post['name'])) {
 			$displayname=$post['addr'];
 		}
+		$posted_o=new DateTime($post['post_date']);
 		$start_o=new DateTime($post['start']);
-		$end_o=new DateTime($post['end']); ?>
+		$end_o=new DateTime($post['end']);
+		
+		$poster=$db_connection->query('select email, fname, lname, standing from users where username="' . $post['username'] . '"')->fetch_assoc();
+		$standing=$poster['standing'];
+		switch ($poster['standing']) {
+			case 1:
+				$standing="Freshman";
+				break;
+			case 2:
+				$standing="Sophomore";
+				break;
+			case 3:
+				$standing="Junior";
+				break;
+			case 4:
+				$standing="Senior";
+				break;
+			case 5:
+				$standing="Super-senior";
+				break;
+			case 6:
+				$standing="Graduate student";
+				break;
+			case 7:
+				$standyng="Faculty, staff or other affiliation";
+				break;
+		} ?>
 	<div class="large-12 columns">
 		<h1><?php echo $displayname . " " . strtolower($post['type']) . " " . $start_o->format("F Y") . "&ndash;" . $end_o->format("F Y"); ?></h1><hr>
-		<p><?php echo basename(__FILE__)=="post.php"; ?></p>
+		<div class="row">
+			<!--address-->
+			<div class="medium-6 columns"><ul class="vcard">
+<?php
+		if (!empty($post['name'])) { ?>
+				<li class="fn"><?php echo $post['name']; ?></li>
+<?php
+		} ?>
+				<li class="street-address"><?php echo $post['addr']; ?></li>
+				<li class="locality"><?php echo $post['city']; ?>, <span class="state"><?php echo $post['state']; ?></span> <span class="zip"><?php echo $post['postcode']; ?></span></li>
+			</ul></div>
+			
+			<!--poster information-->
+			<div class="medium-6 columns"><ul class="vcard right text-center">
+				<li><img src=<?php echo '"http://www.gravatar.com/avatar/' . md5(strtolower(trim($poster['email']))) . '?s=120"'; ?> alt="Gravatar"></li>
+				<li class="fn"><?php echo $poster['fname'] . "&nbsp;" . $poster['lname']; ?></li>
+				<li><?php echo $standing; ?></li>
+				<li class="email"><a href="<?php echo "mailto:" . $poster['email']; ?>">Contact email</a></li>
+			</ul></div>
+		</div>
+		<p>Size: <?php echo $post['bedrooms']; if (!empty($post['volume'])) { echo ", " . $post['volume'] . "&nbsp;ft²"; } ?></p>
+		<p>Price: <?php echo "$" . $post['price'] . "/month"; ?></p>
+<?php
+		if (!empty($post['included'])) {
+			$included=explode(",", $post['included']);
+			echo "<p>Included in rent:</p>\n<ul>\n";
+			foreach ($included as $amenity) {
+				echo "<li>" . $amenity . "</li>\n";
+			}
+			echo "</ul>\n";
+		} ?>
+		<p>Term goes from <?php echo $start_o->format('j F Y'); ?> to <?php echo $end_o->format('j F Y'); ?></p>
+<?php
+		if (!empty($post['description'])) {
+			$description=explode("\n", htmlentities($post['description'])); // parse description as one HTML-sanitised paragraph per array element ?>
+		<h3>Additional comments by poster</h3>
+<?php
+			foreach ($description as $paragraph) {
+				echo "<p>" . $paragraph . "</p>\n";
+			}
+		} ?>
+		<p><small><em>Posted on <?php echo $posted_o->format('j F Y'); ?></em></small></p>
 	</div>
 <?php
 	}
