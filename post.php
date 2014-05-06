@@ -363,6 +363,13 @@ else { // executing add, modify or delete post
 <?php
 			}
 			break;
+		default: ?>
+	<div class="large-12 columns">
+		<h1>Error</h1><hr>
+		<p>You inputted an invalid command.</p>
+		<p>Go back and reconsider what you were doing.</p>
+	</div>
+<?php
 	}
 } ?>
 </div>
