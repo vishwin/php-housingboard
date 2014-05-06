@@ -214,7 +214,7 @@ session_start();
 				$standing="Graduate student";
 				break;
 			case 7:
-				$standyng="Faculty, staff or other affiliation";
+				$standing="Faculty, staff or other affiliation";
 				break;
 		} ?>
 	<div class="large-12 columns">
