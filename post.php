@@ -344,6 +344,85 @@ else { // executing add, modify or delete post
 <?php
 			}
 			break;
+		
+		case "modify":
+			$included=implode(",", $_POST['included']); // stringify
+			$bedrooms=NULL; // prepare for converting number representation to words
+			if ($_POST['bedrooms']<=0) { // studio or efficiency
+				$bedrooms="Efficiency";
+			}
+			else if ($_POST['bedrooms']==1) {
+				$bedrooms="1 bedroom";
+			}
+			else {
+				$bedrooms=$_POST['bedrooms'] . " bedrooms";
+			}
+			
+			$query='update posts set '; // prepare query, with individual fields concatenated in below
+			if (!empty($_POST['complex'])) {
+				$query.='name="' . $_POST['complex'] . '", ';
+			}
+			else {
+				$query.='name=NULL, ';
+			}
+			$query.='addr="' . $_POST['addr'] . '", ';
+			$query.='city="' . $_POST['city'] . '", ';
+			$query.='state="' . $_POST['state'] . '", ';
+			$query.='postcode=' . $_POST['postcode'] . ', ';
+			$query.='type="' . $_POST['type'] . '", ';
+			$query.='start="' . $_POST['start'] . '", ';
+			$query.='end="' . $_POST['end'] . '", ';
+			$query.='bedrooms="' . $bedrooms . '", ';
+			if (!empty($_POST['volume'])) {
+				$query.='volume=' . $_POST['volume'] . ', ';
+			}
+			else {
+				$query.='volume=NULL, ';
+			}
+			$query.='price=' . $_POST['price'] . ', ';
+			if (!empty($_POST['included'])) {
+				$query.='included="' . $included . '", ';
+			}
+			else {
+				$query.='included=NULL, ';
+			}
+			if (!empty($_POST['description'])) {
+				$query.='description="' . $_POST['description'] . '" ';
+			}
+			else {
+				$query.='description=NULL ';
+			}
+			$query.='where post_id="' . $_POST['post_id'] . '"';
+			
+			if (!empty($_POST['addr']) &&
+				!empty($_POST['city']) &&
+				!empty($_POST['state']) &&
+				!empty($_POST['postcode']) &&
+				!empty($_POST['type']) &&
+				!empty($_POST['start']) &&
+				!empty($_POST['end']) &&
+				!empty($_POST['bedrooms']) &&
+				!empty($_POST['price']) &&
+				$db_connection->query($query)) { // with required fields, success state ?>
+	<div class="large-12 columns">
+		<h1>Modify succeeded</h1><hr>
+		<p>Your post has been successfully modified.</p>
+		<p><a href="post.php?id=<?php echo $_POST['post_id']; ?>">View it</a>.</p>
+	</div>
+<?php
+			}
+			else { // failure state ?>
+	<div class="large-12 columns">
+		<h1>Modify failed</h1><hr>
+		<p>Your post could not be modified due to errors.</p>
+		<p>There may have been missing required fields. A database problem is also possible.</p>
+		<p>You may not even be the poster!</p>
+		<p>Go back and try again.</p>
+	</div>
+<?php
+			}
+			break;
+		
 		case "delete":
 			if (!empty($db_connection->query('select * from posts where post_id="' . $_POST['post_id'] . '"')->fetch_assoc()) && $db_connection->query('delete from posts where post_id="' . $_POST['post_id'] . '"')) { ?>
 	<div class="large-12 columns">
@@ -363,6 +442,7 @@ else { // executing add, modify or delete post
 <?php
 			}
 			break;
+		
 		default: ?>
 	<div class="large-12 columns">
 		<h1>Error</h1><hr>
