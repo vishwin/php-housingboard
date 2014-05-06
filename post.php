@@ -20,7 +20,7 @@ session_start();
 		<h1>Add post</h1><hr>
 	</div>
 	<div class="large-12 columns"><form action="post.php?action=add" method="post"><div class="panel">
-		<input type="hidden" name="post_date" value=<?php echo '"' . date("Y-m-d") . '"'; ?>>
+		<input type="hidden" name="post_date" value="<?php echo date("Y-m-d"); ?>">
 		<label>Name of complex (if applicable)
 			<input type="text" name="complex">
 		</label>
@@ -89,8 +89,102 @@ session_start();
 	</div></form></div>
 <?php
 	}
+	else if (isset($_GET['action']) && $_GET['action']=="modify") { // modify post interface
+		$post=$db_connection->query('select * from posts where post_id="' . $_GET['id'] . '"')->fetch_assoc();
+		if ($post['username']!=$_SESSION['user']) { ?>
+	<div class="large-12 columns">
+		<h1>Modify denied</h1><hr>
+		<p>You are not the poster.</p>
+		<p>Return to <a href=".">Main Page</a>.</p>
+	</div>
+<?php
+		}
+		else {
+			$bedrooms=$post['bedrooms'];
+			if ($post['bedrooms']=="Efficiency") {
+				$bedrooms=0;
+			}
+			else {
+				$bedrooms=substr($post['bedrooms'], 0, 1);
+			} ?>
+	<div class="large-12 columns">
+		<h1>Modify post</h1><hr>
+	</div>
+	<div class="large-12 columns"><form action="post.php?action=modify" method="post"><div class="panel">
+		<input type="hidden" name="post_id" value="<?php echo $_GET['id']; ?>">
+		<label>Name of complex (if applicable)
+			<input type="text" name="complex" value="<?php echo $post['name']; ?>">
+		</label>
+		<label>Street address
+			<input type="text" name="addr" value="<?php echo $post['addr']; ?>" required>
+		</label>
+		<div class="row">
+			<div class="medium-4 columns"><label>City
+				<input type="text" name="city" value="<?php echo $post['city']; ?>" required>
+			</label></div>
+			<div class="medium-4 columns"><label>State (two-letter abbreviation)
+				<input type="text" name="state" value="<?php echo $post['state']; ?>" required>
+			</label></div>
+			<div class="medium-4 columns"><label>Post/ZIP code
+				<input type="text" name="postcode" value="<?php echo $post['postcode']; ?>" required>
+			</label></div>
+		</div>
+		<label>Type of deal
+			<select name="type" required>
+				<option name="Sublet">Sublet</option>
+				<option name="Take-over">Take-over</option>
+				<option name="Roommates needed">Roommates needed</option>
+			</select>
+		</label>
+		<div class="row">
+			<div class="medium-6 columns"><label>Start date
+				<input type="date" name="start" placeholder="YYYY-MM-DD" value="<?php echo $post['start']; ?>" required>
+			</label></div>
+			<div class="medium-6 columns"><label>End date
+				<input type="date" name="end" placeholder="YYYY-MM-DD" value="<?php echo $post['end']; ?>" required>
+			</label></div>
+		</div>
+		<div class="row">
+			<div class="medium-6 large-4 columns"><label>Bedrooms
+				<input type="number" name="bedrooms" placeholder="0 = studio/efficiency, 1+ = number of rooms" value="<?php echo $bedrooms; ?>" required>
+			</label></div>
+			<div class="medium-6 large-4 columns"><label>Volume
+				<div class="row collapse">
+					<div class="small-11 columns"><input type="number" name="volume" value="<?php echo $post['volume']; ?>"></div>
+					<div class="small-1 columns"><span class="postfix">ft²</span></div>
+				</div>
+			</label></div>
+			<div class="medium-12 large-4 columns"><label>Price
+				<div class="row collapse">
+					<div class="small-1 columns"><span class="prefix">$</span></div>
+					<div class="small-11 columns"><input type="text" name="price" value="<?php echo $post['price']; ?>" required></div>
+				</div>
+			</label></div>
+		</div>
+		<label>Included in rent</label>
+			<input type="checkbox" name="included[]" value="Heat" id="checkHeat"><label for="checkHeat">Heat</label>
+			<input type="checkbox" name="included[]" value="Electric" id="checkElectric"><label for="checkElectric">Electric</label>
+			<input type="checkbox" name="included[]" value="Water" id="checkWater"><label for="checkWater">Water</label>
+			<input type="checkbox" name="included[]" value="Waste disposal" id="checkWaste"><label for="checkWaste">Waste disposal</label>
+			<input type="checkbox" name="included[]" value="Transit pass" id="checkTransit"><label for="checkTransit">Transit pass</label>
+			<input type="checkbox" name="included[]" value="Cable" id="checkCable"><label for="checkCable">Cable</label>
+			<input type="checkbox" name="included[]" value="Internet" id="checkInternet"><label for="checkInternet">Internet</label>
+			<input type="checkbox" name="included[]" value="Full furnishings" id="checkFurnish"><label for="checkFurnish">Full furnishings</label>
+			<input type="checkbox" name="included[]" value="Parking" id="checkParking"><label for="checkParking">Parking</label>
+			<input type="checkbox" name="included[]" value="Fitness centre" id="checkGym"><label for="checkGym">Fitness centre</label>
+			<input type="checkbox" name="included[]" value="Pool" id="checkPool"><label for="checkPool">Pool</label>
+		<label>Description
+			<textarea name="description"><?php echo $post['description']; ?></textarea>
+		</label>
+		<button type="submit" class="button">Modify post</button>
+		<button type="submit" formaction="post.php?action=delete" class="button alert">Delete post</button>
+	</div></form></div>
+<?php 
+		}
+	}
 	else if (isset($_GET['id']) && !isset($_GET['action'])) {
-		$post=$db_connection->query('select * from posts where post_id="' . $_GET['id'] . '"')->fetch_assoc();$displayname=$post['name'];
+		$post=$db_connection->query('select * from posts where post_id="' . $_GET['id'] . '"')->fetch_assoc();
+		$displayname=$post['name'];
 		if (empty($post['name'])) {
 			$displayname=$post['addr'];
 		}
@@ -245,6 +339,25 @@ else { // executing add, modify or delete post
 		<h1>Add failed</h1><hr>
 		<p>Your post could not be posted due to errors.</p>
 		<p>There may have been missing required fields. A database problem is also possible.</p>
+		<p>Go back and try again.</p>
+	</div>
+<?php
+			}
+			break;
+		case "delete":
+			if (!empty($db_connection->query('select * from posts where post_id="' . $_POST['post_id'] . '"')->fetch_assoc()) && $db_connection->query('delete from posts where post_id="' . $_POST['post_id'] . '"')) { ?>
+	<div class="large-12 columns">
+		<h1>Post deleted</h1><hr>
+		<p>Your post has been successfully deleted.</p>
+		<p>Return to <a href=".">Main Page</a></p>
+	</div>
+<?php
+			}
+			else { ?>
+	<div class="large-12 columns">
+		<h1>Delete failed</h1><hr>
+		<p>Post could not be deleted.</p>
+		<p>The post may no longer exist. A database problem is also possible.</p>
 		<p>Go back and try again.</p>
 	</div>
 <?php
