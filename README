@@ -1,0 +1,23 @@
+PHP-HOUSINGBOARD
+================
+
+…is a concept of a collegiate housing board, done Craigslist-style,
+implemented in PHP. This was my submission for my PHP practical course's
+final project.
+
+It uses MySQL for much of the data backend, with Gravatar to provide
+email-based profile pics. The user interface uses Zurb Foundation.
+
+Installation and configuration
+------------------------------
+This project was originally developed on:
+* Apache 2.4
+* PHP 5.5
+* MariaDB 5.5.37
+I have not tested this on other versions of the above software, but it
+should work with at least Apache 2.2, PHP 5.1 and MySQL 5.1.
+
+Copyright and licence
+---------------------
+This project is copyright 2014 Charlie Li and released under the
+three-clause BSD licence.
