@@ -1,2 +1,3 @@
 *.sql
+!schema.sql
 config.php
